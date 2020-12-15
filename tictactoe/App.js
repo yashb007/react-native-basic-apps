@@ -1,114 +1,203 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
-import React from 'react';
+import React,{useState} from 'react';
 import {
-  SafeAreaView,
   StyleSheet,
-  ScrollView,
   View,
-  Text,
-  StatusBar,
+  TouchableOpacity
 } from 'react-native';
 
 import {
+  Text,
+  Container,
+  Content,
   Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+  Body,
+  Card,Title,
+  H1,H3,Button
+} from 'native-base';
 
-const App: () => React$Node = () => {
+import Icons from './components/Icons';
+import Snackbar from 'react-native-snackbar';
+const styles = StyleSheet.create({
+   grid:{
+     flex: 1,
+     flexDirection:"row",
+     flexWrap:"wrap",
+     marginTop:20,
+
+   },
+   box:{
+     width:"33%",
+     marginBottom:6,
+
+   },
+   card:{
+     height:120,
+     justifyContent:"center",
+      alignItems:"center",
+  
+},
+message:{
+      textAlign:"center",
+      textTransform:"uppercase",
+      color:"#FFF",
+      marginTop:20,
+      backgroundColor:"#4652B3",
+      paddingVertical:10,
+      marginVertical:10
+}
+});
+
+const itemArray = new Array(9).fill('empty')
+
+
+const App = () => {
+
+  const [isCross, setIsCross] = useState(false)
+  const [winMessage, setWinMessage] = useState('')
+
+  const changeItem = (itemNumber)=>{
+      if(winMessage){
+        return Snackbar.show({
+          text  : winMessage,
+          backgroundColor:"#000",
+          textColor:"#FFF"
+        })
+      }
+
+      if(itemArray[itemNumber] == 'empty' ){
+        itemArray[itemNumber] = isCross ? 'cross' : 'circle';
+        setIsCross(!isCross)
+      }
+      else{
+        return Snackbar.show({
+          text  : "Position is already filled",
+          backgroundColor:"#000",
+          textColor:"#FFF"
+        })
+      }
+
+      checkIsWinner()
+
+  }
+
+  const reloadGame = ()=>{
+      setIsCross(false)
+      setWinMessage('')
+      itemArray.fill('empty',0,9)
+  }
+
+  const checkIsWinner = ()=>{
+     if(
+       itemArray[0] === itemArray[1]&&
+       itemArray[1] === itemArray[2]&&
+       itemArray[0] !== 'empty'
+     ){
+       setWinMessage(`${itemArray[0]} won`)
+     }
+     else if(
+      itemArray[3] === itemArray[4]&&
+      itemArray[4] === itemArray[5]&&
+      itemArray[3] !== 'empty'
+    ){
+      setWinMessage(`${itemArray[3]} won`)
+    }
+    
+    else if(
+      itemArray[3] === itemArray[4]&&
+      itemArray[4] === itemArray[5]&&
+      itemArray[3] !== 'empty'
+    ){
+      setWinMessage(`${itemArray[3]} won`)
+    }
+    else if(
+      itemArray[6] === itemArray[7]&&
+      itemArray[7] === itemArray[8]&&
+      itemArray[6] !== 'empty'
+    ){
+      setWinMessage(`${itemArray[6]} won`)
+    }
+    else if(
+      itemArray[3] === itemArray[0]&&
+      itemArray[3] === itemArray[6]&&
+      itemArray[0] !== 'empty'
+    ){
+      setWinMessage(`${itemArray[0]} won`)
+    }
+    else if(
+      itemArray[1] === itemArray[4]&&
+      itemArray[4] === itemArray[7]&&
+      itemArray[1] !== 'empty'
+    ){
+      setWinMessage(`${itemArray[1]} won`)
+    }
+    else if(
+      itemArray[2] === itemArray[5]&&
+      itemArray[5] === itemArray[8]&&
+      itemArray[2] !== 'empty'
+    ){
+      setWinMessage(`${itemArray[2]} won`)
+    }
+    else if(
+      itemArray[0] === itemArray[4]&&
+      itemArray[4] === itemArray[8]&&
+      itemArray[0] !== 'empty'
+    ){
+      setWinMessage(`${itemArray[0]} won`)
+    }
+    else if(
+      itemArray[2] === itemArray[4]&&
+      itemArray[4] === itemArray[6]&&
+      itemArray[2] !== 'empty'
+    ){
+      setWinMessage(`${itemArray[2]} won`)
+    }
+  }
+
   return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
-            </View>
-          )}
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.js</Text> to change this
-                screen and then come back to see your edits.
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>See Your Changes</Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-            <LearnMoreLinks />
+    <Container style={{backgroundColor:"#333945",padding:5}}>
+      <Header >
+      <Body style={{alignItems:"center",justifyContent:"center"}}>
+      <Title >
+        My Tic-Tac-Toe
+      </Title>
+      
+      </Body>
+      </Header>
+
+      <Content>
+      <View style={styles.grid}>
+      
+      {
+        itemArray.map((item,index)=>(
+          <TouchableOpacity style={styles.box} key={index} onPress={()=>{
+            changeItem(index)
+          }}>
+            <Card style={styles.card}> 
+              <Icons name={item} />
+            </Card>
+          </TouchableOpacity>
+        ))
+      }
+      
+      </View>
+       
+
+        {winMessage ? ( 
+          <View>
+           <H1 style={styles.message}>{winMessage}</H1>
+           <Button onPress={reloadGame} primary block rounded>
+           <Text>Reload Game</Text>
+           </Button>
           </View>
-        </ScrollView>
-      </SafeAreaView>
-    </>
+        ) : (
+          <H3 style={styles.message}>{isCross ? 'Cross' : 'Circle'} turns</H3>
+        )}
+
+      </Content>
+      
+
+    </Container>
   );
 };
-
-const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
-  },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
-  body: {
-    backgroundColor: Colors.white,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
-  },
-});
 
 export default App;
